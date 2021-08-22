@@ -1,0 +1,17 @@
+.idea
+.php_cs
+.php_cs.cache
+.phpunit.result.cache
+build
+composer.lock
+coverage
+docs
+phpunit.xml
+psalm.xml
+testbench.yaml
+vendor
+node_modules
+.php-cs-fixer.cache
+_ide_helper.php
+_ide_helper_models.php
+
