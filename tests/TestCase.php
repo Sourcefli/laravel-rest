@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Schema\Blueprint;
 use Orchestra\Testbench\TestCase as Orchestra;
 use Sourcefli\LaravelRest\LaravelRestServiceProvider;
+use Sourcefli\LaravelRest\Tests\Models\Comment;
+use Sourcefli\LaravelRest\Tests\Models\Post;
+use Sourcefli\LaravelRest\Tests\Models\User;
 
 class TestCase extends Orchestra
 {
@@ -29,28 +32,28 @@ class TestCase extends Orchestra
     {
         config()->set('database.default', 'testing');
 
-        $app['db']->connection()->getSchemaBuilder()->create('users', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('email');
-            $table->string('username');
+        $app['db']->connection()->getSchemaBuilder()->create(User::TABLE, function (Blueprint $table) {
+            $table->increments(User::ID);
+            $table->string(User::EMAIL);
+            $table->string(User::USERNAME);
             $table->timestamps();
         });
 
-        $app['db']->connection()->getSchemaBuilder()->create('posts', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('title');
-            $table->string('slug')->unique();
-            $table->text('content');
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+        $app['db']->connection()->getSchemaBuilder()->create(Post::TABLE, function (Blueprint $table) {
+            $table->increments(Post::ID);
+            $table->string(Post::TITLE);
+            $table->string(Post::SLUG)->unique();
+            $table->text(Post::CONTENT);
+            $table->foreignId(Post::FK_USER)->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
 
-        $app['db']->connection()->getSchemaBuilder()->create('comments', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('title');
-            $table->text('content');
-            $table->foreignId('user_id')->constrained();
-            $table->foreignId('post_id')->constrained();
+        $app['db']->connection()->getSchemaBuilder()->create(Comment::TABLE, function (Blueprint $table) {
+            $table->increments(Comment::ID);
+            $table->string(Comment::TITLE);
+            $table->text(Comment::CONTENT);
+            $table->foreignId(Comment::FK_USER)->constrained();
+            $table->foreignId(Comment::FK_POST)->constrained();
             $table->timestamps();
         });
     }
