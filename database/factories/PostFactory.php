@@ -3,17 +3,16 @@
 namespace Sourcefli\LaravelRest\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Sourcefli\LaravelRest\Tests\Models\Post;
 
-/*
-class ModelFactory extends Factory
+class PostFactory extends Factory
 {
-    protected $model = YourModel::class;
+    protected $model = Post::class;
 
-    public function definition()
+    public function definition(): array
     {
         return [
 
         ];
     }
 }
-*/

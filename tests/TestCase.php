@@ -3,6 +3,7 @@
 namespace Sourcefli\LaravelRest\Tests;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Schema\Blueprint;
 use Orchestra\Testbench\TestCase as Orchestra;
 use Sourcefli\LaravelRest\LaravelRestServiceProvider;
 
@@ -28,9 +29,29 @@ class TestCase extends Orchestra
     {
         config()->set('database.default', 'testing');
 
-        /*
-        $migration = include __DIR__.'/../database/migrations/create_laravel-rest_table.php.stub';
-        $migration->up();
-        */
+        $app['db']->connection()->getSchemaBuilder()->create('users', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('email');
+            $table->string('username');
+            $table->timestamps();
+        });
+
+        $app['db']->connection()->getSchemaBuilder()->create('posts', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('title');
+            $table->string('slug')->unique();
+            $table->text('content');
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->timestamps();
+        });
+
+        $app['db']->connection()->getSchemaBuilder()->create('comments', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('title');
+            $table->text('content');
+            $table->foreignId('user_id')->constrained();
+            $table->foreignId('post_id')->constrained();
+            $table->timestamps();
+        });
     }
 }

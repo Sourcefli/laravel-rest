@@ -4,4 +4,5 @@ namespace Sourcefli\LaravelRest;
 
 class LaravelRest
 {
+
 }

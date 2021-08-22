@@ -2,12 +2,18 @@
 
 namespace Sourcefli\LaravelRest;
 
+use Illuminate\Database\Eloquent\Model;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Sourcefli\LaravelRest\Commands\LaravelRestCommand;
 
 class LaravelRestServiceProvider extends PackageServiceProvider
 {
+    public function boot()
+    {
+        Model::unguard();
+    }
+
     public function configurePackage(Package $package): void
     {
         /*
