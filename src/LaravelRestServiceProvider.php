@@ -17,9 +17,7 @@ class LaravelRestServiceProvider extends PackageServiceProvider
          */
         $package
             ->name('laravel-rest')
-            ->hasConfigFile()
-            ->hasViews()
-            ->hasMigration('create_laravel-rest_table')
+            ->hasConfigFile('laravel-rest')
             ->hasCommand(LaravelRestCommand::class);
     }
 }
