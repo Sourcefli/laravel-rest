@@ -25,8 +25,6 @@ class CommentFactory extends Factory
 
     public function withAllRelations(): self
     {
-//        $this->afterCreating->push();
-
         return $this;
     }
 }
