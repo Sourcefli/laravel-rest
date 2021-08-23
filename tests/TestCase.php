@@ -96,7 +96,5 @@ class TestCase extends Orchestra
             $table->timestamps();
         });
 
-//        Post::clearBootedModels();
-        \App\Models\Post::boot();
     }
 }

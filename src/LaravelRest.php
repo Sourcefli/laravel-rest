@@ -46,7 +46,7 @@ class LaravelRest
         return function () {
             return self::collectModels()->filter(
                 fn ($m) => in_array(Resourceful::class, class_uses_recursive($m))
-            );
+            )->toArray();
         };
     }
 
@@ -54,8 +54,8 @@ class LaravelRest
     {
         return function () {
             return self::collectModels()->filter(
-                fn ($m) => in_array(ApiResourceful::class, class_uses_recursive($m)) &&
-            );
+                fn ($m) => in_array(ApiResourceful::class, class_uses_recursive($m))
+            )->toArray();
         };
     }
 
