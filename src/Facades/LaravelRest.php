@@ -1,13 +1,13 @@
 <?php
 
-namespace Sourcefli\LaravelRest;
+namespace Sourcefli\LaravelRest\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
 /**
  * @see \Sourcefli\LaravelRest\LaravelRest
  */
-class LaravelRestFacade extends Facade
+class LaravelRest extends Facade
 {
     protected static function getFacadeAccessor()
     {

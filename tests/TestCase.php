@@ -4,6 +4,7 @@ namespace Sourcefli\LaravelRest\Tests;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Foundation\Application;
 use Orchestra\Testbench\TestCase as Orchestra;
 use Sourcefli\LaravelRest\LaravelRestServiceProvider;
 use Sourcefli\LaravelRest\Tests\Models\Comment;
@@ -28,18 +29,56 @@ class TestCase extends Orchestra
         ];
     }
 
+    /**
+     * Override application aliases.
+     *
+     * @param  Application  $app
+     *
+     * @return array
+     */
+    protected function getPackageAliases($app): array
+    {
+        return [
+            'LaravelRest' => 'Sourcefli\\LaravelRest\\Facades\\LaravelRest',
+        ];
+    }
+
+    /**
+     * Ignore package discovery from.
+     *
+     * @return array
+     */
+    public function ignorePackageDiscoveriesFrom()
+    {
+        return [];
+    }
+
     public function getEnvironmentSetUp($app)
     {
-        config()->set('database.default', 'testing');
+        $app['config']->set('database.default', 'testbench');
+        $app['config']->set('database.connections.testbench', [
+            'driver'   => 'sqlite',
+            'database' => ':memory:',
+            'prefix'   => '',
+        ]);
 
-        $app['db']->connection()->getSchemaBuilder()->create(User::TABLE, function (Blueprint $table) {
+    }
+
+    /**
+     * Define database migrations.
+     *
+     * @return void
+     */
+    protected function defineDatabaseMigrations()
+    {
+        $this->app['db']->connection()->getSchemaBuilder()->create(User::TABLE, function (Blueprint $table) {
             $table->increments(User::ID);
             $table->string(User::EMAIL);
             $table->string(User::USERNAME);
             $table->timestamps();
         });
 
-        $app['db']->connection()->getSchemaBuilder()->create(Post::TABLE, function (Blueprint $table) {
+        $this->app['db']->connection()->getSchemaBuilder()->create(Post::TABLE, function (Blueprint $table) {
             $table->increments(Post::ID);
             $table->string(Post::TITLE);
             $table->string(Post::SLUG)->unique();
@@ -48,7 +87,7 @@ class TestCase extends Orchestra
             $table->timestamps();
         });
 
-        $app['db']->connection()->getSchemaBuilder()->create(Comment::TABLE, function (Blueprint $table) {
+        $this->app['db']->connection()->getSchemaBuilder()->create(Comment::TABLE, function (Blueprint $table) {
             $table->increments(Comment::ID);
             $table->string(Comment::TITLE);
             $table->text(Comment::CONTENT);
@@ -56,5 +95,8 @@ class TestCase extends Orchestra
             $table->foreignId(Comment::FK_POST)->constrained();
             $table->timestamps();
         });
+
+//        Post::clearBootedModels();
+        \App\Models\Post::boot();
     }
 }

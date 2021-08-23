@@ -11,7 +11,7 @@ class UserControllerTest extends TestCase
     {
         $u = User::factory()->create();
 
-        $response = $this->getJson('/users');
+        $response = $this->getJson('/api/foo');
 
         $response->assertOk();
 

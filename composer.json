@@ -39,7 +39,8 @@
     },
     "scripts": {
         "psalm": "vendor/bin/psalm --show-info=true",
-        "test": "./vendor/bin/testbench package:test --parallel --no-coverage",
+        "test": "./vendor/bin/testbench --parallel --no-coverage",
+        "test-pkg": "./vendor/bin/testbench package:test --parallel --no-coverage",
         "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
     },
     "config": {
@@ -51,7 +52,7 @@
                 "Sourcefli\\LaravelRest\\LaravelRestServiceProvider"
             ],
             "aliases": {
-                "LaravelRest": "Sourcefli\\LaravelRest\\LaravelRestFacade"
+                "LaravelRest": "Sourcefli\\LaravelRest\\Facades\\LaravelRest"
             }
         }
     },
