@@ -4,8 +4,11 @@ namespace Sourcefli\LaravelRest;
 
 use Closure;
 use Illuminate\Container\Container;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use Illuminate\Support\Stringable;
+use Sourcefli\LaravelRest\Traits\ApiResourceful;
 use Sourcefli\LaravelRest\Traits\Resourceful;
 use Symfony\Component\Finder\SplFileInfo;
 
@@ -41,22 +44,18 @@ class LaravelRest
     private static function defaultResourceLoader(): callable
     {
         return function () {
-            return collect(File::allFiles(self::getModelsPath()))
-                ->mapWithKeys(function (SplFileInfo $fileInfo) {
-                    $model = self::getNamespacedModel($fileInfo->getBasename());
-
-                    return dd(in_array(Resourceful::class, class_uses_recursive($model)));
-                });
+            return self::collectModels()->filter(
+                fn ($m) => in_array(Resourceful::class, class_uses_recursive($m))
+            );
         };
     }
 
     private static function defaultApiResourceLoader(): callable
     {
         return function () {
-            return collect(File::allFiles(app_path('Models')))
-                ->mapWithKeys(function (SplFileInfo $fileInfo) {
-                    dd('in resource loader', $fileInfo);
-                });
+            return self::collectModels()->filter(
+                fn ($m) => in_array(ApiResourceful::class, class_uses_recursive($m)) &&
+            );
         };
     }
 
@@ -84,15 +83,35 @@ class LaravelRest
 
         $appRoot = (string) Str::of(app_path())->afterLast('/')->studly()->append('\\');
 
-        return Str::of($className)
-                ->when(filled(self::modelsDir()), fn ($str) => $str->prepend('Models\\'))
+        return (string) Str::of($className)
+                ->when(filled(self::modelsDir()),
+                    fn ($str) => $str->prepend('Models\\')
+                )
                 ->prepend($appRoot)
-                ->tap(function ($str) {
-                    dd(app((string) $str));
-                    if (! class_exists($model = (string) $str)) {
-                        throw new \RuntimeException("No model found at namespace $model");
-                    }
-                })
-                ->__toString();
+                ->pipe(function (Stringable $str) {
+                    return rescue(function () use ($str) {
+                        return is_subclass_of((string) $str, Model::class)
+                            ? (string) $str
+                            : '';
+                    },
+                        null,
+                        false
+                    );
+                });
+    }
+
+    /**
+     * @return \Illuminate\Support\Collection
+     */
+    private static function collectModels(): \Illuminate\Support\Collection
+    {
+        return collect(File::allFiles(self::getModelsPath()))
+            ->map(function (SplFileInfo $fileInfo) {
+                $model = self::getNamespacedModel($fileInfo->getBasename());
+
+                return filled($model) ? $model : null;
+            })
+            ->filter()
+            ->map(fn ($m) => app($m));
     }
 }
